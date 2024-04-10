@@ -1,18 +1,44 @@
 <template>
   <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <Header></Header>
+    <CreateArea :handlesubmit="handleSubmit"></CreateArea>
+    <div class="note_zone">
+    <Note v-for="(note,index) in notes" :note="note" :key="index" :index="index" :deletenote="deleteNote" ></Note>  
+    </div>
+    <Footer></Footer>
   </div>
 </template>
 
 <script>
-// @ is an alias to /src
-import HelloWorld from '@/components/HelloWorld.vue'
-
+import Header from '@/components/Header.vue'
+import Note from '@/components/Note.vue'
+import Footer from '@/components/Footer.vue'
+import CreateArea from '../components/CreateArea.vue'
 export default {
   name: 'HomeView',
   components: {
-    HelloWorld
+    Header,
+    Note,
+    Footer,
+    CreateArea
+  },
+  data(){
+    return {
+      notes:[],
+    }
+  },
+  methods:{
+    deleteNote(index){this.notes.splice(index,1);this.updateLocalStorage()},
+    handleSubmit(title,body){this.notes.push({title:title,body:body});this.updateLocalStorage()},
+    updateLocalStorage(){
+      // console.log(this.notes);
+      window.localStorage.setItem("notes",JSON.stringify(this.notes))}
+  },
+  created(){
+    const arrayOfNotes=localStorage.getItem("notes");
+    if (arrayOfNotes){
+      this.notes=JSON.parse(arrayOfNotes)
+    }
   }
 }
 </script>
